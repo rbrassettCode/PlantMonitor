@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import requests
+import serial
 
 
 URL = "https://n23z6lq35bem5cu7gw3mhmdnya.appsync-api.us-east-2.amazonaws.com/graphql"
@@ -20,15 +21,23 @@ mutation CreatePlantStatus($input: CreatePlantStatusInput!) {
 }
 """
 
+ser = serial.Serial('/dev/ttyACM0', 9600)  # Adjust the device name as necessary (could be /dev/ttyUSB0, /dev/ttyACM1, etc.)
+time.sleep(2)  # Wait for the serial connection to initialize
+
 def collect_plant_data():
     ##Fexch data from arduino slave device
-    ## data = getData()
+
+    ser.write(b'Hello Arduino!')
+    if ser.in_waiting:  # If data is available
+        data = ser.readline().decode('utf-8').strip()  # Read and decode data
+        print(f"Received: {data}")  # Print received data
+    
     return {
         "input": {
-        "moisture": 123.45, #data,moisture
-        "temperature": 1020, #data.temperature
+        "moisture": data["moisture"],
+        "temperature": data["temperature"], 
         "time": get_current_time(),
-        "watered": True #data.watered
+        "watered": data["watered"]
     }
     }
 

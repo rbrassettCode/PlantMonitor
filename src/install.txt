@@ -1,2 +1,15 @@
 sudo pip3 install requests
 
+Create cron in rpi with crontab -e
+
+add 
+0 * * * * /usr/bin/python3 /home/pi/main.py
+
+use crontab -l to see current cron jobs on system
+
+run this to make sure script is executable
+chmod +x /home/pi/myscript.py
+
+using 
+0 * * * * /usr/bin/python3 /home/pi/myscript.py >> /home/pi/myscript.log 2>&1
+it allows logging
